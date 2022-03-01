@@ -21,30 +21,45 @@ namespace CyberASP.Controllers
         [HttpGet]
         public IEnumerable<Team> Get()
         {
-            return teams;
+            if (CyberUser.IsLogin)
+            {
+                return teams;
+            }
+            else
+            {
+                return null;
+            }
         }
         [HttpPost]
         public StatusCodeResult AddTeam(string name,DateTime created)
         {
-            int status = 204;
-            if(name.Length>3 && created.ToString().Length > 0 )
+            if (CyberUser.IsLogin)
             {
-                try
+                int status = 204;
+                if (name.Length > 3 && created.ToString().Length > 0)
                 {
-                    teams.Add(new Team(name, created));
-                    status = 200;
+                    try
+                    {
+                        teams.Add(new Team(name, created));
+                        status = 200;
+                    }
+                    catch (Exception)
+                    {
+                        status = 204;
+                    }
+
                 }
-                catch (Exception)
+                else
                 {
                     status = 204;
                 }
-                
+                return StatusCode(status);
             }
             else
             {
-                status = 204;
+                return StatusCode(401);
             }
-            return StatusCode(status);
+            
         }
     }
 }

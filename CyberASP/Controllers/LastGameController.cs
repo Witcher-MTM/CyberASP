@@ -16,29 +16,45 @@ namespace CyberASP.Controllers
         [HttpGet]
         public IEnumerable<LastGame> Get()
         {
+            if (CyberUser.IsLogin)
+            {
+
             return games;
+            }
+            else
+            {
+                return null;
+            }
         }
         [HttpPost]
         public StatusCodeResult AddLastGame(string GameName, DateTime created)
         {
-            int status = 204;
-            if (GameName != null)
+            if (CyberUser.IsLogin)
             {
-                try
+                int status = 204;
+                if (GameName != null)
                 {
-                    games.Add(new LastGame(GameName,created));
-                    status = 200;
+                    try
+                    {
+                        games.Add(new LastGame(GameName, created));
+                        status = 200;
+                    }
+                    catch (Exception)
+                    {
+                        status = 204;
+                    }
                 }
-                catch (Exception)
+                else
                 {
                     status = 204;
                 }
+                return StatusCode(status);
             }
             else
             {
-                status = 204;
+                return StatusCode(401);
             }
-            return StatusCode(status);
+            
         }
     }
 }

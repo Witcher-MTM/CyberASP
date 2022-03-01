@@ -3,23 +3,25 @@ using System.Net;
 using System.Net.Mail;
 namespace CyberASP
 {
-    public class User
+    public class CyberUser
     {
         public string Login { get; set; }
         public string Email { get; set; }
         public string Token { get; set; }
         public DateTime date_registr { get; set; }
         public static bool IsLogin;
-        public User()
+        public CyberUser()
         {
             IsLogin = false;
         }
-        public User(string login , string email)
+       
+        public CyberUser(string login , string email)
         {
             this.Login = login;
             this.Email = email;
             this.date_registr = DateTime.Now;
             GenToken();
+            IsLogin = false;
         }
         private void GenToken()
         {
@@ -62,7 +64,7 @@ namespace CyberASP
                 return false;
             }
         }
-        public async Task SendEmailAsync()
+        public async void SendEmailAsync()
         {
             MailAddress from = new MailAddress("rubicktanks@gmail.com", "CyberUser");
             MailAddress to = new MailAddress(Email);
@@ -74,5 +76,6 @@ namespace CyberASP
             smtp.EnableSsl = true;
             await smtp.SendMailAsync(m);
         }
+        
     }
 }

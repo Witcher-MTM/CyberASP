@@ -4,15 +4,15 @@ namespace CyberASP.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class Registration : ControllerBase
+    public class RegistrationController : ControllerBase
     {
-        private readonly ILogger<Registration> _logger;
-        public User user { get; set; }
+        private readonly ILogger<RegistrationController> _logger;
+        public CyberUser user { get; set; }
         public SqlOperations sql_operat { get; set; }
-        public Registration(ILogger<Registration> logger)
+        public RegistrationController(ILogger<RegistrationController> logger)
         {
             _logger = logger;
-            user = new User();
+            user = new CyberUser();
             sql_operat = new SqlOperations();
         }
         [HttpPost]
@@ -20,10 +20,10 @@ namespace CyberASP.Controllers
         {
             if (user.validDates(login, email))
             {
-                user = new User(login, email);
+                user = new CyberUser(login, email);
                 ConnectDataBase.Connect();
                 sql_operat.AddUser(user.Login, user.Email, user.date_registr, user.Token);
-                user.SendEmailAsync().GetAwaiter();
+                user.SendEmailAsync();
                 return StatusCode(200);
             }
             else

@@ -21,38 +21,53 @@ namespace CyberASP.Controllers
         [HttpGet]
         public IEnumerable<Player> GetPlayers()
         {
-            try
+            if (CyberUser.IsLogin)
             {
-                return players;
-            }
-            catch (Exception)
-            {
+                try
+                {
+                    return players;
+                }
+                catch (Exception)
+                {
 
-                throw;
+                    throw;
+                }
+            }
+            else
+            {
+                return null;
             }
         }
         [HttpPost]
         public StatusCodeResult AddPlayer(string name,string secondname,string lastname, string nickname, string teamName)
         {
-            int status = 204;
-            if(name.Length>3 && secondname.Length>3 && nickname.Length>3 && teamName != null)
+            if (CyberUser.IsLogin)
             {
-                try
+                int status = 204;
+                if (name.Length > 3 && secondname.Length > 3 && nickname.Length > 3 && teamName != null)
                 {
-                    players.Add(new Player(name, secondname, lastname, nickname, teams.Where(x => x.Name.ToLower() == teamName.ToLower()).First()));
-                    status = 200;
+                    try
+                    {
+                        players.Add(new Player(name, secondname, lastname, nickname, teams.Where(x => x.Name.ToLower() == teamName.ToLower()).First()));
+                        status = 200;
+                    }
+                    catch (Exception)
+                    {
+                        status = 204;
+
+                    }
                 }
-                catch (Exception)
+                else
                 {
                     status = 204;
-
                 }
+                return StatusCode(status);
             }
             else
             {
-                status = 204;
+                return StatusCode(401);
             }
-            return StatusCode(status);
+           
         }
     }
 }
